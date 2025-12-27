@@ -1,18 +1,18 @@
 require("data")
 require("ship")
 require("input")
-require("flight_plan")
+require("navigation")
 
 function love.load()
     love.window.setTitle("Flying Fantasy")
     initGameData()
 
      player1 = newShip("IMG/spaceship_ai.png", 100, 500)
+     player1.weapon = newWeapon(60,200)
      player2 = newShip("IMG/spaceship2_ai.png", 600, 100, moves.DOWN)
+     player2.weapon = newWeapon(60,200)
      player2.scale = 0.08
      active_ship = player1
-
-    updateFlightPlan(active_ship)
     
 end
 
@@ -25,7 +25,7 @@ function love.update(dt)
     end
 
     if battle.movetimer > 0 then
-        moveShip(dt, active_ship, battle.movetimer, battle.playspeed)
+        moveSceneObject(dt, active_ship, battle.movetimer, battle.playspeed)
         battle.movetimer = battle.movetimer - dt
     else
         if battle.phase == "move" then
@@ -37,14 +37,15 @@ function love.update(dt)
             battle.phase = "plan"
         end
         readFlightInput(dt, active_ship)
-        updateFlightPlan(active_ship)
+        updateFlightPlan(active_ship.flightPlan)
     end
     
 end
 
 
 function love.draw()
-    drawFlightPlan(active_ship)
+    drawFlightPlan(active_ship.flightPlan)
+    drawArc(active_ship)
     drawShip(player1)
     drawShip(player2)
 end
